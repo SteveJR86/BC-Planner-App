@@ -71,11 +71,13 @@ function loadDetails(){
   // function to load saved data into timeblocks if present
   let plannerData = window.localStorage.getItem('plannerData');
   plannerData = JSON.parse(plannerData);
-  if(plannerData.date === currentDate.format('DD-MM-YYYY')){
-    jQuery.each($('textarea'), function(i){
-      let currentHourRow = $('textarea')[i];
-      $('#' + currentHourRow.getAttribute('id')).val(plannerData[currentHourRow.getAttribute('id')]);
-    });
+  if(plannerData){
+    if(plannerData.date === currentDate.format('DD-MM-YYYY')){
+      jQuery.each($('textarea'), function(i){
+        let currentHourRow = $('textarea')[i];
+        $('#' + currentHourRow.getAttribute('id')).val(plannerData[currentHourRow.getAttribute('id')]);
+      });
+    }
   }
 }
 
