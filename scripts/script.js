@@ -10,21 +10,10 @@ function renderRow(hourDisplay){
   let hour = $('<h2>');
   hour.text(hourDisplay.format('ha'));
   hour.addClass('hour');
-  // description alters which classes are added depending on whether the hour is past, present
-  // or future
   let description = $('<textarea cols="35">')
-  // add id for saving later
+  // add id for saving and formatting as past present or future later
   description.attr('id', hourDisplay.format('H'));
-  description.addClass('description');
-  let currentTime = moment().set({minutes: 0, seconds: 0, milliseconds: 0});
-  // if else block to check if hour of current row is before, equal to or after the current time
-  if(hourDisplay.isBefore(currentTime)){
-    description.addClass('past');
-  } else if (hourDisplay.isSame(currentTime)) {
-    description.addClass('present');
-  } else {
-    description.addClass('future');
-  }
+  description.addClass('description'); 
   let saveBtn = $('<i>');
   // add data attribute to identify which element is clicked
   saveBtn.attr('data-hour', hourDisplay.format('H'));
@@ -86,7 +75,36 @@ $(document).ready(function(){
   $('#currentDay').text(currentDate.format('dddd, MMMM Do'));
   // render time block area with rows as required
   renderTimeBlock(9, 17);
+  setPastPresentFuture();
   loadDetails();
 });
 
 $('.time-block').on('click', saveDetails);
+
+function setPastPresentFuture(){
+  // function to format rows depending on whether they are past, present or future
+  // get all rows with class description
+  let timeRows = $('.description');
+  // use jQuery each to loop through rows
+  timeRows.each(function(){
+    // this refers to the current row
+    let currentRow = $( this );
+    // gets the hour that the current row represents from the id and parses it as an int
+    let currentRowHour = parseInt(currentRow.attr('id'));
+    // gets the current time formatted as just hours and parses it as an int
+    let currentTime = parseInt(moment().format('H'));
+  // if else block to check if hour of current row is before, equal to or after the current time
+  if(currentRowHour < currentTime){
+    currentRow.addClass('past');
+    currentRow.removeClass('present');
+  } else if (currentRowHour===currentTime) {
+    currentRow.addClass('present');
+    currentRow.removeClass('future');
+  } else {
+    currentRow.addClass('future');
+  }
+  });
+}
+
+// refresh background colour of rows every minute 
+setInterval(setPastPresentFuture, 1000*60);
